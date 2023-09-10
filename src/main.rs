@@ -18,7 +18,19 @@ async fn main_async() -> u32 {
     println!("FutureOne1 returned: {}", one);
     let two = FutureOne.await;
     println!("FutureOne2 returned: {}", two);
+    demo_async().await;
     one + two
+}
+
+async fn demo_async() {
+    let (tx, rx) = async_channel::unbounded();
+    println!("demo_async");
+    spawn(demo2_async(tx));
+    let _ = rx.recv().await;
+}
+async fn demo2_async(tx: async_channel::Sender<()>) {
+    println!("demo2_async");
+    let _ = tx.send(()).await;
 }
 
 fn main() {
